@@ -37,14 +37,28 @@ public class ServerWorker extends Thread {
                 String cmd = tokens[0];
                 if ("quit".equalsIgnoreCase(line)){
                     break;
-                }
-                else{
-                    String msg = "Wrong:" + cmd + "\n";
+                }else if("login".equalsIgnoreCase(cmd)){            //if we type login -> <user> <password>
+                    handleLogin(outputStream, tokens);
+                }else{
+                    String msg = "Wrong: username or password\n";
                     outputStream.write(msg.getBytes());
                 }
             }
         }
 
         clientSocket.close();
+    }
+
+    private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
+        if (tokens.length == 3){
+            String username = tokens[1];
+            String password = tokens[2];
+            if ("guest".equalsIgnoreCase(username) && "guest".equalsIgnoreCase(password)){
+                outputStream.write("successfully login \n".getBytes());
+            }else{
+                outputStream.write("error login\n".getBytes());
+            }
+
+        }
     }
 }
