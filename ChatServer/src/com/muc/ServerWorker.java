@@ -3,12 +3,14 @@ package com.muc;
 import java.io.*;
 import java.net.Socket;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Date;
 
 public class ServerWorker extends Thread {
     private final Socket clientSocket;
+    private final Server server;
     private String login = null;
-    public ServerWorker(Socket clientSocket) {
+
+    public ServerWorker(Server server,Socket clientSocket) {
+        this.server = server;
         this.clientSocket = clientSocket;
     }
 
