@@ -2,12 +2,15 @@ package com.muc;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class ServerWorker extends Thread {
     private final Socket clientSocket;
     private final Server server;
     private String login = null;
+    private OutputStream outputStream;
 
     public ServerWorker(Server server,Socket clientSocket) {
         this.server = server;
@@ -29,7 +32,7 @@ public class ServerWorker extends Thread {
         //Create the function to read data from a client and sent data back to client
         //getting access to inputstream for reading data
         InputStream inputStream = clientSocket.getInputStream();
-        OutputStream outputStream = clientSocket.getOutputStream();
+        this.outputStream = clientSocket.getOutputStream();
 
         //in order to read line by line
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -52,6 +55,10 @@ public class ServerWorker extends Thread {
         clientSocket.close();
     }
 
+    public String getLogin(){
+        return login;
+    }
+
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
         if (tokens.length == 3){
             String username = tokens[1];
@@ -61,10 +68,21 @@ public class ServerWorker extends Thread {
 
                 this.login = username;
                 System.out.println(login + " successfully login");
+
+                String onlineInfo = login + " is online.";
+                List<ServerWorker> workerList = server.getWorkerList();
+                for(ServerWorker i : workerList){
+                    i.send(onlineInfo);
+                }
             }else{
                 outputStream.write("error login\n".getBytes());
             }
 
         }
+    }
+
+    private void send(String onlineInfo) {
+        //access the outputStream
+
     }
 }
