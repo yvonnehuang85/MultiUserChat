@@ -15,9 +15,6 @@ public class Server extends Thread{
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(serverPort);
-            //continuously accept the connections from the client
-            //if you are processing the connection of client, you cannot accept more connection
-            //Keep the main thread free to accept other connection
             while (true) {
                 System.out.println("Prepare to accept client connection");
                 Socket clientSocket = serverSocket.accept();
