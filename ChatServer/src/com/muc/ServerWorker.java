@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class ServerWorker extends Thread {
     private final Socket clientSocket;
+    private String login = null;
     public ServerWorker(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
@@ -55,6 +56,9 @@ public class ServerWorker extends Thread {
             String password = tokens[2];
             if ("guest".equalsIgnoreCase(username) && "guest".equalsIgnoreCase(password)){
                 outputStream.write("successfully login \n".getBytes());
+
+                this.login = username;
+                System.out.println(login + " successfully login");
             }else{
                 outputStream.write("error login\n".getBytes());
             }
