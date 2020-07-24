@@ -63,16 +63,30 @@ public class ServerWorker extends Thread {
         if (tokens.length == 3){
             String username = tokens[1];
             String password = tokens[2];
-            if ("guest".equalsIgnoreCase(username) && "guest".equalsIgnoreCase(password)){
+            if (("guest".equalsIgnoreCase(username) && "guest".equalsIgnoreCase(password)) || ("elsa".equalsIgnoreCase(username) && "elsa".equalsIgnoreCase(password))){
                 outputStream.write("successfully login \n".getBytes());
 
                 this.login = username;
                 System.out.println(login + " successfully login");
 
-                String onlineInfo = login + " is online.";
                 List<ServerWorker> workerList = server.getWorkerList();
+                //get information from other users except itself
                 for(ServerWorker i : workerList){
-                    i.send(onlineInfo);
+                    if(!login.equals(i.getLogin())) {
+                        if (i.getLogin() != null) {
+                            send(i.getLogin() + " is online.");
+                        }
+                    }
+                }
+
+                //send to other user that you are login
+                String onlineInfo = "Other User :"+ login + " is online now.";
+                for(ServerWorker i : workerList){
+                    if(!login.equals(i.getLogin())) {
+                        if(i.getLogin()!=null){
+                            i.send(onlineInfo);
+                        }
+                    }
                 }
             }else{
                 outputStream.write("error login\n".getBytes());
@@ -81,8 +95,11 @@ public class ServerWorker extends Thread {
         }
     }
 
-    private void send(String onlineInfo) {
+    //name as msg to be more general
+    private void send(String msg) throws IOException {
         //access the outputStream
-
+        if(login != null){
+            outputStream.write((msg + "\n").getBytes());
+        }
     }
 }
