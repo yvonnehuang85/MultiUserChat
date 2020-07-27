@@ -41,7 +41,8 @@ public class ServerWorker extends Thread {
             String[] tokens = StringUtils.split(line);
             if (tokens != null && tokens.length != 0){
                 String cmd = tokens[0];
-                if ("quit".equalsIgnoreCase(line)){
+                if ("quit".equalsIgnoreCase(line) || "logoff".equalsIgnoreCase(line)){
+                    handleLogoff();
                     break;
                 }else if("login".equalsIgnoreCase(cmd)){            //if we type login -> <user> <password>
                     handleLogin(outputStream, tokens);
@@ -94,6 +95,19 @@ public class ServerWorker extends Thread {
             }
 
         }
+    }
+
+    private void handleLogoff() throws IOException {
+        server.handleRemove(this);
+        List<ServerWorker> workerList = server.getWorkerList();
+        //send to other user that you are logoff
+        String offlineInfo = "Other User :"+ login + " is offline now.";
+        for(ServerWorker i : workerList){
+            if(!login.equals(i.getLogin())) {
+                i.send(offlineInfo);             //logoff means that thread will be null but we did not remove it from our list
+            }
+        }
+        clientSocket.close();
     }
 
     //name as msg to be more general
