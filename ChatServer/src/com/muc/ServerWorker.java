@@ -53,6 +53,8 @@ public class ServerWorker extends Thread {
                     handleMsg(tokens);
                 }else if("join".equalsIgnoreCase(cmd)){
                     handleJoin(tokens);
+                }else if("leave".equalsIgnoreCase(cmd)){
+                    handleLeave(tokens);
                 }else{
                     String msg = "Wrong: username or password\n";
                     outputStream.write(msg.getBytes());
@@ -168,5 +170,13 @@ public class ServerWorker extends Thread {
         return topicSet.contains(topic);
     }
 
+
+    private void handleLeave(String[] tokens) {
+        if(tokens.length>1){
+            String topic = tokens[1];
+            //store membership to the topic
+            topicSet.remove(topic);
+        }
+    }
 
 }
