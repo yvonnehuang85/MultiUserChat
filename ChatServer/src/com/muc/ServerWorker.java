@@ -38,14 +38,17 @@ public class ServerWorker extends Thread {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while((line=reader.readLine())!=null){
-            String[] tokens = StringUtils.split(line);
+            String[] tokens = StringUtils.split(line,null,3);
             if (tokens != null && tokens.length != 0){
+                // set the token[0] is the command
                 String cmd = tokens[0];
                 if ("quit".equalsIgnoreCase(line) || "logoff".equalsIgnoreCase(line)){
                     handleLogoff();
                     break;
-                }else if("login".equalsIgnoreCase(cmd)){            //if we type login -> <user> <password>
+                }else if("login".equalsIgnoreCase(cmd)) {            //if we type login -> <user> <password>
                     handleLogin(outputStream, tokens);
+                }else if("msg".equalsIgnoreCase(cmd)){
+                    handleMsg(tokens);
                 }else{
                     String msg = "Wrong: username or password\n";
                     outputStream.write(msg.getBytes());
@@ -116,5 +119,22 @@ public class ServerWorker extends Thread {
         if(login != null){
             outputStream.write((msg + "\n").getBytes());
         }
+    }
+
+    //handle msg commands
+    //guest: "msg" "elsa" "Hello World"  ---> Sent
+    //else:  "msg" "guest" "Hello World" ---> Receive
+    private void handleMsg(String[] tokens) throws IOException {
+        String sendTo = tokens[1];
+        String body = tokens[2];
+
+        List<ServerWorker> workerList = server.getWorkerList();
+        for(ServerWorker i : workerList){
+            if(sendTo.equalsIgnoreCase(i.getLogin())){
+                String sendMsg = "msg " + i.getLogin()+ " " + body + "\n";
+                i.send(sendMsg);
+            }
+        }
+
     }
 }
