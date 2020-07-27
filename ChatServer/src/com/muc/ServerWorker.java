@@ -84,7 +84,8 @@ public class ServerWorker extends Thread {
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
                         if(i.getLogin()!=null){
-                            i.send(onlineInfo);
+                            i.send(onlineInfo);         //if we take out i
+                                                        //will send to itself (Other user: itself is online)
                         }
                     }
                 }
