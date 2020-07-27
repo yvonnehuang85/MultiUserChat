@@ -2,6 +2,7 @@ package com.muc;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ public class ServerWorker extends Thread {
     private final Server server;
     private String login = null;
     private OutputStream outputStream;
+    private HashSet<String> topicSet = new HashSet<>();
 
     public ServerWorker(Server server,Socket clientSocket) {
         this.server = server;
@@ -49,6 +51,8 @@ public class ServerWorker extends Thread {
                     handleLogin(outputStream, tokens);
                 }else if("msg".equalsIgnoreCase(cmd)){
                     handleMsg(tokens);
+                }else if("join".equalsIgnoreCase(cmd)){
+                    handleJoin(tokens);
                 }else{
                     String msg = "Wrong: username or password\n";
                     outputStream.write(msg.getBytes());
@@ -75,6 +79,7 @@ public class ServerWorker extends Thread {
 
                 List<ServerWorker> workerList = server.getWorkerList();
                 //get information from other users except itself
+                //the person who log in    call this send
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
                         if (i.getLogin() != null) {
@@ -84,6 +89,7 @@ public class ServerWorker extends Thread {
                 }
 
                 //send to other user that you are login
+                //i    call  this send (i is people who already login)
                 String onlineInfo = "Other User :"+ login + " is online now.";
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
@@ -136,5 +142,13 @@ public class ServerWorker extends Thread {
             }
         }
 
+    }
+
+    private void handleJoin(String[] tokens){
+        if(tokens.length>1){
+            String topic = tokens[1];
+            //store membership to the topic
+            topicSet.add(topic);
+        }
     }
 }
