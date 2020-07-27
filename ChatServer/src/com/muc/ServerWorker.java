@@ -67,6 +67,8 @@ public class ServerWorker extends Thread {
         return login;
     }
 
+    //classify: login will be the person who is sending message now
+    //          i.getLogin() will be people in the workerList, it means that people who are online now or who are in the team now
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
         if (tokens.length == 3){
             String username = tokens[1];
@@ -131,17 +133,26 @@ public class ServerWorker extends Thread {
     //guest: "msg" "elsa" "Hello World"  ---> Sent
     //else:  "msg" "guest" "Hello World" ---> Receive
     private void handleMsg(String[] tokens) throws IOException {
-        String sendTo = tokens[1];
+        String sendTo = tokens[1];              //also is the topic in join command
         String body = tokens[2];
+
+        boolean isTopic = sendTo.charAt(0) == '#';
 
         List<ServerWorker> workerList = server.getWorkerList();
         for(ServerWorker i : workerList){
-            if(sendTo.equalsIgnoreCase(i.getLogin())){
-                String sendMsg = "msg " + i.getLogin()+ " " + body + "\n";
+            //chatroom send message to the chatroom with the sender_name
+            if (isTopic){
+                if (i.isMemberOfTopic(sendTo)){
+                    String sendMsg = "msg " + sendTo + ":" + login + " " + body + "\n";
+                    i.send(sendMsg);
+                }
+            }
+            //not chat room
+            else if (sendTo.equalsIgnoreCase(i.getLogin())){
+                String sendMsg = "msg " + login + " " + body + "\n";
                 i.send(sendMsg);
             }
         }
-
     }
 
     private void handleJoin(String[] tokens){
@@ -151,4 +162,11 @@ public class ServerWorker extends Thread {
             topicSet.add(topic);
         }
     }
+
+    //Define a function to see if that topic string in inside the topicSet
+    private boolean isMemberOfTopic(String topic){
+        return topicSet.contains(topic);
+    }
+
+
 }
