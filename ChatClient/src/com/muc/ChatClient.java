@@ -51,7 +51,13 @@ public class ChatClient {
             } else {
                 System.err.println("Login Failed");
             }
+            client.logoff();
         }
+    }
+
+    private void logoff() throws IOException {
+        String cmd = "logoff\n";
+        serverOut.write(cmd.getBytes());
     }
 
 
