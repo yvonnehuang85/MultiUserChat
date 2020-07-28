@@ -2,6 +2,7 @@ package com.muc;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.spec.RSAOtherPrimeInfo;
 import java.util.HashSet;
 import java.util.List;
 
@@ -39,9 +40,9 @@ public class ServerWorker extends Thread {
         //in order to read line by line
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
-        while((line=reader.readLine())!=null){
+        while((line = reader.readLine()) != null){
             String[] tokens = StringUtils.split(line,null,3);
-            if (tokens != null && tokens.length != 0){
+            if (tokens != null && tokens.length > 0){
                 // set the token[0] is the command
                 String cmd = tokens[0];
                 if ("quit".equalsIgnoreCase(line) || "logoff".equalsIgnoreCase(line)){
@@ -61,7 +62,6 @@ public class ServerWorker extends Thread {
                 }
             }
         }
-
         clientSocket.close();
     }
 
@@ -73,12 +73,12 @@ public class ServerWorker extends Thread {
     //          i.getLogin() will be people in the workerList, it means that people who are online now or who are in the team now
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
         if (tokens.length == 3){
-            String username = tokens[1];
+            String login = tokens[1];
             String password = tokens[2];
-            if (("guest".equalsIgnoreCase(username) && "guest".equalsIgnoreCase(password)) || ("elsa".equalsIgnoreCase(username) && "elsa".equalsIgnoreCase(password))){
-                outputStream.write("successfully login \n".getBytes());
+            if ((login.equals("guest") && password.equals("guest")) || (login.equals("elsa") && password.equals("elsa"))){
+                outputStream.write("successfully login\n".getBytes());
 
-                this.login = username;
+                this.login = login;
                 System.out.println(login + " successfully login");
 
                 List<ServerWorker> workerList = server.getWorkerList();
@@ -105,9 +105,13 @@ public class ServerWorker extends Thread {
                 }
             }else{
                 outputStream.write("error login\n".getBytes());
+                System.err.println("Login failed for " + login);
             }
-
         }
+        /*else{
+            outputStream.write("error login\n".getBytes());
+            System.err.println("Login failed for " + login);
+        }*/
     }
 
     private void handleLogoff() throws IOException {
