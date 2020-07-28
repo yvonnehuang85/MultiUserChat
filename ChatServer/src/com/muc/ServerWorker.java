@@ -87,14 +87,14 @@ public class ServerWorker extends Thread {
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
                         if (i.getLogin() != null) {
-                            send(i.getLogin() + " is online.");
+                            send("online " + i.getLogin());
                         }
                     }
                 }
 
                 //send to other user that you are login
                 //i    call  this send (i is people who already login)
-                String onlineInfo = "Other User :"+ login + " is online now.";
+                String onlineInfo = "online "+ login;
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
                         if(i.getLogin()!=null){
@@ -118,7 +118,7 @@ public class ServerWorker extends Thread {
         server.handleRemove(this);
         List<ServerWorker> workerList = server.getWorkerList();
         //send to other user that you are logoff
-        String offlineInfo = "Other User :"+ login + " is offline now.";
+        String offlineInfo = "offline "+ login;
         for(ServerWorker i : workerList){
             if(!login.equals(i.getLogin())) {
                 i.send(offlineInfo);             //logoff means that thread will be null but we did not remove it from our list
