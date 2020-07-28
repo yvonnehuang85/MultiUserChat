@@ -19,6 +19,7 @@ public class ChatClient {
     private BufferedReader bufferedIn;
 
     private ArrayList<UserStatusListener> userStatusListeners = new ArrayList<>();
+    private ArrayList<MessageListener> messageListeners = new ArrayList<>();
 
     public ChatClient(String serverName, int serverPort) {
         this.serverName = serverName;
@@ -28,6 +29,7 @@ public class ChatClient {
     public static void main(String[] args) throws IOException {
         ChatClient client = new ChatClient("localhost", 8818);
 
+        //use interface('s method) to print something in terminal
         //before doing anything --> add user listener
         client.addUserStatusListener(new UserStatusListener() {
             @Override
@@ -41,6 +43,13 @@ public class ChatClient {
             }
         });
 
+        client.addMessageListener(new MessageListener() {
+            @Override
+            public void onMessage(String fromLogin, String msgBody) {
+                System.out.println("You got a message from " + fromLogin + " Content : " + msgBody);
+            }
+        });
+
         //Connection to server   so we need a connection to a socket
         if (!client.connect()) {
             System.err.println("connection failed");
@@ -48,17 +57,24 @@ public class ChatClient {
             System.out.println("connection successful");
             if (client.login("guest", "guest")) {
                 System.out.println("Login successful");
+
+                client.msg("elsa", "Hello");
             } else {
                 System.err.println("Login Failed");
             }
-            client.logoff();
+            //client.logoff();
         }
     }
 
-    private void logoff() throws IOException {
-        String cmd = "logoff\n";
+    private void msg(String sendTo, String msgBody) throws IOException {
+        String cmd = "msg " + sendTo + " " + msgBody + "\n";
         serverOut.write(cmd.getBytes());
     }
+
+    /*private void logoff() throws IOException {
+        String cmd = "logoff\n";
+        serverOut.write(cmd.getBytes());
+    }*/
 
 
     private boolean login(String login, String password) throws IOException {
@@ -86,6 +102,7 @@ public class ChatClient {
     }
 
     //Read line by line from server output and it is also our client input
+    //Read from server
     private void readMsgLoop() {
         try {
             String line;
@@ -97,6 +114,8 @@ public class ChatClient {
                         handleOnline(tokens);
                     }else if("offline".equalsIgnoreCase(cmd)){
                         handleOffline(tokens);
+                    }else if("msg".equalsIgnoreCase(cmd)){
+                        handleMessage(tokens);
                     }
                 }
             }
@@ -107,6 +126,14 @@ public class ChatClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void handleMessage(String[] tokens) {
+        String login = tokens[1];
+        String msgBody = tokens[2];
+        for(MessageListener listener: messageListeners){
+            listener.onMessage(login, msgBody);
         }
     }
 
@@ -124,15 +151,6 @@ public class ChatClient {
         return false;
     }
 
-    //Create a method that component can register
-    private void addUserStatusListener(UserStatusListener listener) {
-        userStatusListeners.add(listener);
-    }
-
-    private void removeUserStatusListener(UserStatusListener listener) {
-        userStatusListeners.remove(listener);
-    }
-
     private void handleOnline(String[] tokens) {
         String login = tokens[1];
         for(UserStatusListener listener : userStatusListeners){
@@ -145,6 +163,24 @@ public class ChatClient {
         for(UserStatusListener listener : userStatusListeners){
             listener.offline(login);
         }
+    }
+
+    //Create a method that component can register
+    private void addUserStatusListener(UserStatusListener listener) {
+        userStatusListeners.add(listener);
+    }
+
+    private void removeUserStatusListener(UserStatusListener listener) {
+        userStatusListeners.remove(listener);
+    }
+
+    //Create a method that component can register
+    private void addMessageListener(MessageListener listener) {
+        messageListeners.add(listener);
+    }
+
+    private void removeMessageListener(MessageListener listener) {
+        messageListeners.remove(listener);
     }
 }
 
