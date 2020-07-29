@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
-public class MessagePane extends JPanel {
+public class MessagePane extends JPanel implements MessageListener {
 
     private final ChatClient client;
     private final String login;
@@ -20,6 +20,9 @@ public class MessagePane extends JPanel {
     public MessagePane(ChatClient client, String login) {
         this.client = client;
         this.login = login;
+
+        //Add ourselves as  message listener
+        client.addMessageListener(this);
 
         msgListModel = new DefaultListModel<>();
         msgList = new JList<>(msgListModel);
@@ -39,7 +42,7 @@ public class MessagePane extends JPanel {
                     String text = inputField.getText();
                     client.msg(login, text);
                     //Add the text to conversation list (addElement---add at the end of the vector ans increase the sze by one)
-                    msgListModel.addElement(text);
+                    msgListModel.addElement("You: " + text);
                     //clear the inputField
                     inputField.setText("");
 
@@ -49,5 +52,11 @@ public class MessagePane extends JPanel {
 
             }
         });
+    }
+
+    @Override
+    public void onMessage(String fromLogin, String msgBody) {
+        String line = fromLogin + ": " + msgBody;
+        msgListModel.addElement(line);  //represented by JList
     }
 }
