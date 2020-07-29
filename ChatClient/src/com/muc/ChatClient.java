@@ -66,18 +66,18 @@ public class ChatClient {
         }
     }
 
-    private void msg(String sendTo, String msgBody) throws IOException {
+    public void msg(String sendTo, String msgBody) throws IOException {
         String cmd = "msg " + sendTo + " " + msgBody + "\n";
         serverOut.write(cmd.getBytes());
     }
 
-    /*private void logoff() throws IOException {
+    /*public void logoff() throws IOException {
         String cmd = "logoff\n";
         serverOut.write(cmd.getBytes());
     }*/
 
 
-    private boolean login(String login, String password) throws IOException {
+    public boolean login(String login, String password) throws IOException {
         String cmd = "login " + login + " " + password + "\n";
         serverOut.write(cmd.getBytes());        //send command to the server
 
@@ -137,7 +137,7 @@ public class ChatClient {
         }
     }
 
-    private boolean connect() {
+    public boolean connect() {
         try {
             this.socket = new Socket(serverName, serverPort);
             System.out.println("The client port is " + socket.getLocalPort());
@@ -170,16 +170,16 @@ public class ChatClient {
         userStatusListeners.add(listener);
     }
 
-    private void removeUserStatusListener(UserStatusListener listener) {
+    public void removeUserStatusListener(UserStatusListener listener) {
         userStatusListeners.remove(listener);
     }
 
     //Create a method that component can register
-    private void addMessageListener(MessageListener listener) {
+    public void addMessageListener(MessageListener listener) {
         messageListeners.add(listener);
     }
 
-    private void removeMessageListener(MessageListener listener) {
+    public void removeMessageListener(MessageListener listener) {
         messageListeners.remove(listener);
     }
 }

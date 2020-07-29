@@ -2,12 +2,14 @@ package com.muc;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 //using java swing
 public class UserListPane extends JPanel implements UserStatusListener {
 
     private final ChatClient client;
-    private JList<String> userListUI;                   //Component
+    private final DefaultListModel<String> userListModel;
+    private JList<String> userListUI;                           //Component
 
     public UserListPane(ChatClient client) {
         this.client = client;
@@ -15,7 +17,8 @@ public class UserListPane extends JPanel implements UserStatusListener {
         //It means that this interface has to be implemented by this class.
         this.client.addUserStatusListener(this);
 
-        userListUI = new JList<>();
+        userListModel = new DefaultListModel<>();
+        userListUI = new JList<>(userListModel);
         setLayout(new BorderLayout());
         add(new JScrollPane(userListUI), BorderLayout.CENTER);
     }
@@ -31,15 +34,23 @@ public class UserListPane extends JPanel implements UserStatusListener {
         //userListPane is the main component --- frame.getContentPane().add(childComponent)
         frame.getContentPane().add(userListPane, BorderLayout.CENTER);
         frame.setVisible(true);                                        //must exist or you cannot see the window
+
+        /*if(client.connect()){
+            try {
+                client.login("guest","guest");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
     }
 
     @Override
     public void online(String login) {
-
+        userListModel.addElement(login);
     }
 
     @Override
     public void offline(String login) {
-
+        userListModel.removeElement(login);
     }
 }
