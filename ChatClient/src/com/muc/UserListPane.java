@@ -37,7 +37,7 @@ public class UserListPane extends JPanel implements UserStatusListener {
 
                     //show it as separate window
                     JFrame f = new JFrame("Message " + login);
-                    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     f.setSize(500, 500);
 
                     f.getContentPane().add(messagePane, BorderLayout.CENTER);
