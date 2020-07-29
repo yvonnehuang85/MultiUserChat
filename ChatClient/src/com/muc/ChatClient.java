@@ -166,7 +166,7 @@ public class ChatClient {
     }
 
     //Create a method that component can register
-    private void addUserStatusListener(UserStatusListener listener) {
+    public void addUserStatusListener(UserStatusListener listener) {
         userStatusListeners.add(listener);
     }
 
