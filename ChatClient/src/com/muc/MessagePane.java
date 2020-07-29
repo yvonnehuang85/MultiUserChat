@@ -56,7 +56,12 @@ public class MessagePane extends JPanel implements MessageListener {
 
     @Override
     public void onMessage(String fromLogin, String msgBody) {
-        String line = fromLogin + ": " + msgBody;
-        msgListModel.addElement(line);  //represented by JList
+        //build a filter -- make sure that the message pane is exist before (only for this login)
+        //if it's message from any other login then we want to be able to filter that out
+        if(login.equalsIgnoreCase(fromLogin)){
+            String line = fromLogin + ": " + msgBody;
+            msgListModel.addElement(line);  //represented by JList
+        }
+
     }
 }
