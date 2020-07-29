@@ -35,13 +35,13 @@ public class UserListPane extends JPanel implements UserStatusListener {
         frame.getContentPane().add(userListPane, BorderLayout.CENTER);
         frame.setVisible(true);                                        //must exist or you cannot see the window
 
-        /*if(client.connect()){
+        if(client.connect()){
             try {
                 client.login("guest","guest");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     @Override
