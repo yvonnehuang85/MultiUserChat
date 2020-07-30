@@ -8,25 +8,42 @@ import java.io.IOException;
 
 public class LoginWindow extends JFrame {
     private final ChatClient client;
-    JTextField loginField = new JTextField();
+    JTextField loginField = new JTextField(20);
     JPasswordField passwordField = new JPasswordField();
     JButton loginButton = new JButton("login");
 
     public LoginWindow(){
         super("Login");             //frame's title
+        setSize(300,150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel p = new JPanel();
+        add(p);
+        p.setLayout(null);
+
+        //BoxLayout(Container target, axis)
+        //p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+
 
         this.client = new ChatClient("localhost", 8818);
         client.connect();
 
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JPanel p = new JPanel();
-        //BoxLayout(Container target, axis)
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        loginField.setBounds(100,20,165,25);
         p.add(loginField);
+
+        passwordField.setBounds(100,50,165,25);
         p.add(passwordField);
+
+        loginButton.setBounds(100,80,80,25);
         p.add(loginButton);
+
+        JLabel username = new JLabel("Username");
+        username.setBounds(10,20,80,25);
+        p.add(username);
+
+        JLabel password = new JLabel("Password");
+        password.setBounds(10,50,80,25);
+        p.add(password);
 
         //Create the action that when user click login button
         loginButton.addActionListener(new ActionListener() {
@@ -38,11 +55,13 @@ public class LoginWindow extends JFrame {
 
         //Add this panel to this windows(frame)
         //add "component" by "kind of layout"
-        getContentPane().add(p, BorderLayout.CENTER);
+        //getContentPane().add(p, BorderLayout.CENTER);
 
         //resize the panel to fit the frame
-        pack();
+        //pack()
+
         setVisible(true);
+
     }
 
     private void doLogin() {
