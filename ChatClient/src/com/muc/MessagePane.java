@@ -13,7 +13,7 @@ public class MessagePane extends JPanel implements MessageListener {
     private final String login;
 
     //Start create the messagePane user interface
-    private final DefaultListModel<String> msgListModel;
+    private DefaultListModel<String> msgListModel;
     private JList<String> msgList;
     private JTextField inputField = new JTextField();
 
@@ -59,6 +59,8 @@ public class MessagePane extends JPanel implements MessageListener {
     public void onMessage(String fromLogin, String msgBody) {
         //build a filter -- make sure that the message pane is exist before (only for this login)
         //if it's message from any other login then we want to be able to filter that out
+
+        //From telnet to window
         if(login.equalsIgnoreCase(fromLogin)){
             String line = fromLogin + ": " + msgBody;
             msgListModel.addElement(line);  //represented by JList

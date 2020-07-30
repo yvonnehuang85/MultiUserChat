@@ -10,8 +10,8 @@ import java.io.IOException;
 public class UserListPane extends JPanel implements UserStatusListener {
 
     private final ChatClient client;
-    private final DefaultListModel<String> userListModel;
-    private JList<String> userListUI;                           //Component
+    private JList<String> userListUI;                   //Component
+    private DefaultListModel<String> userListModel;
 
     public UserListPane(ChatClient client) {
         this.client = client;

@@ -91,7 +91,7 @@ public class ChatClient {
         }
     }
 
-    private void startMsgReader() {
+    public void startMsgReader() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -103,7 +103,7 @@ public class ChatClient {
 
     //Read line by line from server output and it is also our client input
     //Read from server
-    private void readMsgLoop() {
+    public void readMsgLoop() {
         try {
             String line;
             while ((line = bufferedIn.readLine()) != null) {
