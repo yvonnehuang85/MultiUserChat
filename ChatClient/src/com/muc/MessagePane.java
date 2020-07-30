@@ -18,6 +18,7 @@ public class MessagePane extends JPanel implements MessageListener {
     private JTextField inputField = new JTextField();
 
     public MessagePane(ChatClient client, String login) {
+        //login is the user you selected and we pass this into our constructor
         this.client = client;
         this.login = login;
 
