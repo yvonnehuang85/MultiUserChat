@@ -47,7 +47,7 @@ public class UserListPane extends JPanel implements UserStatusListener {
         });
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         ChatClient client = new ChatClient("localhost", 8818);
 
         UserListPane userListPane = new UserListPane(client);
@@ -66,7 +66,7 @@ public class UserListPane extends JPanel implements UserStatusListener {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     @Override
     public void online(String login) {
