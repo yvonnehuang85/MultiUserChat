@@ -19,7 +19,8 @@
     - Direct or Chatroom messages
     
 ## Commands
-1. **login** <username> <password>
+1. **login** 
+    - login <username> <password>
 2. **logoff** / **quit**
 3. **msg** <the person you want to talk to> <message>
     - Ann: 
