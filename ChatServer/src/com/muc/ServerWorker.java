@@ -2,8 +2,8 @@ package com.muc;
 
 import java.io.*;
 import java.net.Socket;
-import java.security.spec.RSAOtherPrimeInfo;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +13,7 @@ public class ServerWorker extends Thread {
     private final Server server;
     private String login = null;
     private OutputStream outputStream;
+    private Hashtable<String, String> dict = new Hashtable<>();
     private HashSet<String> topicSet = new HashSet<>();
 
     public ServerWorker(Server server,Socket clientSocket) {
@@ -49,7 +50,7 @@ public class ServerWorker extends Thread {
                     handleLogoff();
                     break;
                 }else if("login".equalsIgnoreCase(cmd)) {            //if we type login -> <user> <password>
-                    handleLogin(outputStream, tokens);
+                    handleLogin(outputStream, tokens, dict);
                 }else if("msg".equalsIgnoreCase(cmd)){
                     handleMsg(tokens);
                 }else if("join".equalsIgnoreCase(cmd)){
@@ -70,20 +71,60 @@ public class ServerWorker extends Thread {
     }
 
     //classify: login will be the person who is sending message now
-    //          i.getLogin() will be people in the workerList, it means that people who are online now or who are in the team now
-    private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
-        if (tokens.length == 3){
+    //          i.getLogin() will be people in the workerList, it means that people who are online now or who are in the team
+
+    private boolean checkExist() throws IOException {
+        List<ServerWorker> workerList = server.getWorkerList();
+        int count = 0;
+        for(ServerWorker i : workerList){
+            if(login.equals(i.getLogin())) {
+                count += 1;
+            }
+        }
+        if(count > 1) {
+            return true;
+        }
+        return false;
+    }
+
+    private void handleLogin(OutputStream outputStream, String[] tokens, Hashtable<String, String> dict) throws IOException {
+        if (tokens.length == 3) {
             String login = tokens[1];
             String password = tokens[2];
-            if ((login.equals("guest") && password.equals("guest")) || (login.equals("elsa") && password.equals("elsa"))){
+
+            //System.out.println(dict);
+
+
+            //System.out.println(workerList);
+            /*for(ServerWorker i : workerList){
+                if(login.equals(i.getLogin())) {
+                    outputStream.write("username has been taken\n".getBytes());
+                    System.err.println("Login failed for " + login + "username has been taken\n");
+                }
+            }*/
+
+            List<ServerWorker> workerList = server.getWorkerList();
+            int count = 0;
+            for(ServerWorker i : workerList){
+                if(login.equals(i.getLogin())) {
+                    count += 1;
+                }
+            }
+            System.out.println(count);
+            if(count == 1) {
+                outputStream.write("username has been taken\n".getBytes());
+                System.err.println("Login failed for " + login + "username has been taken/n");
+            }else {
+                dict.put(login, password);
                 outputStream.write("successfully login\n".getBytes());
 
                 this.login = login;
                 System.out.println(login + " successfully login");
 
-                List<ServerWorker> workerList = server.getWorkerList();
+
                 //get information from other users except itself
                 //the person who log in    call this send
+                //List<ServerWorker> workerList = server.getWorkerList();
                 for(ServerWorker i : workerList){
                     if(!login.equals(i.getLogin())) {
                         if (i.getLogin() != null) {
@@ -99,20 +140,54 @@ public class ServerWorker extends Thread {
                     if(!login.equals(i.getLogin())) {
                         if(i.getLogin()!=null){
                             i.send(onlineInfo);         //if we take out i
-                                                        //will send to itself (Other user: itself is online)
+                            //will send to itself (Other user: itself is online)
                         }
                     }
                 }
-            }else{
-                outputStream.write("error login\n".getBytes());
-                System.err.println("Login failed for " + login);
             }
-        }
+
+
+
+
+            /*if ((login.equals("guest") && password.equals("guest")) || (login.equals("elsa") && password.equals("elsa"))){
+            outputStream.write("successfully login\n".getBytes());
+
+            this.login = login;
+            System.out.println(login + " successfully login");
+
+            List<ServerWorker> workerList = server.getWorkerList();
+            //get information from other users except itself
+            //the person who log in    call this send
+            for(ServerWorker i : workerList){
+                if(!login.equals(i.getLogin())) {
+                    if (i.getLogin() != null) {
+                        send("online " + i.getLogin());
+                    }
+                }
+            }
+
+            //send to other user that you are login
+            //i    call  this send (i is people who already login)
+            String onlineInfo = "online "+ login;
+            for(ServerWorker i : workerList){
+                if(!login.equals(i.getLogin())) {
+                    if(i.getLogin()!=null){
+                        i.send(onlineInfo);         //if we take out i
+                        //will send to itself (Other user: itself is online)
+                    }
+                }
+            }
+        }else{
+            outputStream.write("error login\n".getBytes());
+            System.err.println("Login failed for " + login);
+            }
+        }*/
         /*else{
             outputStream.write("error login\n".getBytes());
             System.err.println("Login failed for " + login);
         }*/
     }
+}
 
     private void handleLogoff() throws IOException {
         server.handleRemove(this);
