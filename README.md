@@ -20,9 +20,9 @@
     
 ## Commands
 1. **login** 
-    - login <username> <password>
+    - login "username" "password"
 2. **logoff** / **quit**
-3. **msg** <the person you want to talk to> <message>
+3. **msg** "the person you want to talk to" "message"
     - Ann: 
         * msg Bob How are you?  —— Sent
     - Bob: 
@@ -31,7 +31,7 @@
 4. **join** #<group_name>
     - join #team1
     - msg #team1 Hi everyone  —— Sent
-    - msg #team1:<login>Hi everyone  —— Recieve
+    - msg #team1:"login" Hi everyone  —— Recieve
         * Everyone in the group will receive the message
 5. **leave** #<group_name>
 
