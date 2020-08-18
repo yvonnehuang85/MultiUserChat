@@ -62,7 +62,7 @@ You receive the msg 		: “msg” “sent from whom” “msg body” <br>
 3. Avoid duplicate username
 4. Notify every user when someone login or logoff
 5. Having a group to chat with
-6. Simple GUI with a list of onlin user, login pages, and message frame
+6. Simple GUI with a list of online user, login pages, and message frame
 
 ## Reference
 Learn from youtube video from FullStackMastery. <br>
